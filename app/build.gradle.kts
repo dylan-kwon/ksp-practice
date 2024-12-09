@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.ksp)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.hilt.android)
 }
 
 android {
@@ -49,6 +50,10 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+    ksp {
+        arg("option1", "value1")
+        arg("option2", "value2")
+    }
 }
 
 dependencies {
@@ -68,6 +73,10 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    ksp(libs.hilt.compiler)
+    implementation(libs.hilt.android)
+    implementation(libs.hilt.compose)
 
     ksp(projects.myProcessor)
     implementation(projects.myAnnotation)

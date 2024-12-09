@@ -8,36 +8,37 @@ import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.processing.SymbolProcessorProvider
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
-import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import dylan.kwon.kotlin.ksp.myannotation.MyAnnotation
 
 class MyProcessorProvider : SymbolProcessorProvider {
     override fun create(environment: SymbolProcessorEnvironment): SymbolProcessor {
-        return MyProcessor(environment.codeGenerator)
+        return MyProcessor(environment.options, environment.codeGenerator)
     }
 }
 
 class MyProcessor(
-    private val codeGenerator: CodeGenerator
+    private val options: Map<String, String>,
+    private val codeGenerator: CodeGenerator,
 ) : SymbolProcessor {
     override fun process(resolver: Resolver): List<KSAnnotated> {
         resolver.getSymbolsWithAnnotation(MyAnnotation::class.java.canonicalName).forEach {
-            val declarationAClass = it as KSClassDeclaration
-            val declarationBClass = declarationAClass.superTypes.first().resolve().declaration
 
-            val dependencies = Dependencies(aggregating = true, declarationAClass.containingFile!!)
+            val declarationClass = it as KSClassDeclaration
 
-            val outputName = "Gen_${declarationBClass.simpleName.asString()}"
-            val output =
-                codeGenerator.createNewFile(dependencies, "dylan.kwon.generated", outputName)
+            // 종속성
+            val dependencies = Dependencies(
+                aggregating = true, declarationClass.containingFile!!
+            )
 
-            output.bufferedWriter().use {
-                it.write("class Haha")
+            val outputName = "Gen_${declarationClass.simpleName.asString()}_${options["option1"]}"
+            val output = codeGenerator.createNewFile(
+                dependencies, "dylan.kwon.generated", outputName
+            )
+            output.bufferedWriter().use { writer ->
+                writer.write("class Haha")
             }
         }
         return emptyList()
     }
 }
 
-fun KSClassDeclaration.getDeclaredFunctions(): Sequence<KSFunctionDeclaration> =
-    declarations.filterIsInstance<KSFunctionDeclaration>()
