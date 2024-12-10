@@ -1,5 +1,0 @@
-package dylan.kwon.kotlin.ksp.myannotation
-
-@Target(AnnotationTarget.CLASS)
-@Retention(AnnotationRetention.SOURCE)
-annotation class MyAnnotation
