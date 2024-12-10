@@ -1,2 +1,1 @@
-dylan.kwon.kotlin.ksp.myprocessor.MyProcessorProvider
 dylan.kwon.kotlin.ksp.myprocessor.HiltBindsSymbolProcessorProvider
